@@ -1,0 +1,23 @@
+{
+  "name": "rabbit-structure-visualizer",
+  "version": "1.0.0",
+  "description": "rabbit-structure visualizer",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pipedrive/rabbit-structure-visualizer.git"
+  },
+  "author": "martin <martin@pipedrive.com> (http://www.pipedrive.com/)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/pipedrive/rabbit-structure-visualizer/issues"
+  },
+  "homepage": "https://github.com/pipedrive/rabbit-structure-visualizer#readme",
+  "dependencies": {
+    "ejs": "^2.4.1",
+    "express": "^4.13.4"
+  }
+}

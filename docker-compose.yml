@@ -1,0 +1,6 @@
+app:
+  build: .
+  ports:
+    - 55672:55672
+  volumes:
+    - .:/app

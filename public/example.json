@@ -1,0 +1,73 @@
+{
+    "exchanges": [
+        {
+            "name": "some_events",
+            "options": {
+                "type": "topic",
+                "durable": true,
+                "autoDelete": false
+            }
+        },
+        {
+            "name": "serviceA.retries.sender",
+            "options": {
+                "type": "topic",
+                "durable": true,
+                "autoDelete": false
+            }
+        },
+        {
+            "name": "serviceA.retries",
+            "options": {
+                "type": "topic",
+                "durable": true,
+                "autoDelete": false
+            }
+        }
+    ],
+    "queues": [
+        {
+            "name": "serviceA.some_events.queue",
+            "options": {
+                "durable": true,
+                "autoDelete": false
+            },
+            "bindings": [
+                {
+                    "exchange": "some_events",
+                    "routing": "#"
+                }
+            ]
+        },
+        {
+            "name": "serviceA.retries.queue",
+            "options": {
+                "durable": true,
+                "autoDelete": false
+            },
+            "bindings": [
+                {
+                    "exchange": "serviceA.retries",
+                    "routing": "#"
+                }
+            ]
+        },
+        {
+            "name": "serviceA.retries.sender.queue",
+            "options": {
+                "durable": true,
+                "autoDelete": false,
+                "arguments": {
+                    "x-dead-letter-exchange": "serviceA.retries",
+                    "x-message-ttl": 10000
+                }
+            },
+            "bindings": [
+                {
+                    "exchange": "serviceA.retries.sender",
+                    "routing": "#"
+                }
+            ]
+        }
+    ]
+}
