@@ -1,13 +1,43 @@
 <!DOCTYPE html>
 <meta charset="utf-8">
 <style>
-/* TODO */
+	body {
+		font: 14px 'Helvetica Neue', Helvetica, Arial, sans-serif;
+		margin: 30px auto;
+	}
+
+	body {
+		width: 80%;
+	}
+
+	#chart {
+		width: 100%;
+		height: 600px;
+	}
+
+	.node rect {
+		fill-opacity: .9;
+		shape-rendering: crispEdges;
+	}
+	.node text {
+		text-shadow: 0 1px 0 #fff;
+	}
+
+	.link {
+		fill: none;
+		stroke: #000;
+		stroke-opacity: .1;
+	}
 </style>
 <body>
-<script src="//d3js.org/d3.v3.min.js"></script>
-<script>
-/* TODO */
-</script>
+<div id="chart"></div>
+
+<script src="//cdn.jsdelivr.net/lodash/4.7.0/lodash.min.js"></script>
+<script src="//d3js.org/d3.v3.min.js" charset="utf-8"></script>
+<script src="/js/sankey.js"></script>
+<script src="/js/d3.chart.min.js"></script>
+<script src="/js/d3.chart.sankey.min.js"></script>
+<script src="/js/visualizer.js"></script>
 
 </body>
 </html>
