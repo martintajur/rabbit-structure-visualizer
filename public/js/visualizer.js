@@ -7,9 +7,9 @@ function renderStructure(err, structure) {
 			.select("#chart")
 			.html('')
 			.append('svg')
-			.chart('Sankey'),
-		exchangeFmt = _.template('Exchange <%- name %>'),
-		queueFmt = _.template('Queue <%- name %>'),
+			.chart('Sankey.Path'),
+		exchangeFmt = _.template('Exchange: <%- name %>'),
+		queueFmt = _.template('Queue: <%- name %>'),
 		bindingFmt = _.template('→ <%- routing %> →'),
 		deadLetterBindingFmt = _.template('← x-dead-letter-exchange: <%- data["x-dead-letter-exchange"] %> (<%- data["x-message-ttl"] %> ms) ←', { variable: 'data' });
 
@@ -109,4 +109,5 @@ function renderStructure(err, structure) {
 	});
 
 	chart.draw(chartData);
+
 }
