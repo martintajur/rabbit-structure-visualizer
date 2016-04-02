@@ -1,8 +1,37 @@
-d3.json('/example.json', renderStructure);
+var input = document.getElementById('input'),
+	delayTimer = null;
 
-function renderStructure(err, structure) {
-	if (err) throw err;
+input.addEventListener('change', reactToChange);
+input.addEventListener('keyup', reactToChange);
 
+d3.json('/example.json', renderDefault);
+
+function renderDefault(err, str) {
+	input.value = JSON.stringify(str, null, 3);
+	renderStructure(str);
+}
+
+function reactToChange() {
+	var data;
+	try {
+		data = JSON.parse(this.value);
+	}
+	catch (err) {
+		console.warn(err);
+	}
+	renderStructureWithDelay(data);
+}
+
+function renderStructureWithDelay(structure) {
+	if (delayTimer) {
+		clearTimeout(delayTimer);
+	}
+	delayTimer = setTimeout(function() {
+		renderStructure(structure);
+	}, 200);
+}
+
+function renderStructure(structure) {
 	var chart = d3
 			.select("#chart")
 			.html('')

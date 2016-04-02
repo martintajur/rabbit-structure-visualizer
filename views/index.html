@@ -29,10 +29,24 @@
 		stroke: #000;
 		stroke-opacity: .1;
 	}
+
+	textarea#input {
+		width: 100%;
+		max-width: 100%;
+		min-width: 100%;
+		height: 400px;
+		margin-bottom: 50px;
+		box-sizing: border-box;
+		font: 14px Consolas,Menlo,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New,monospace,sans-serif;
+	}
+
 </style>
 <title>rabbit-structure visualizer</title>
 </head>
 <body>
+
+<textarea id="input"></textarea>
+
 <div id="chart"></div>
 
 <script src="//cdn.jsdelivr.net/lodash/4.7.0/lodash.min.js"></script>
