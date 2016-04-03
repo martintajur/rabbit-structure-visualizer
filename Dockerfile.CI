@@ -7,7 +7,7 @@ ENV SERVICE_55672_NAME rabbit-structure-visualizer
 ENV NPM_CONFIG_LOGLEVEL warn
 
 WORKDIR /app
-EXPOSE 55672
+EXPOSE 55672:55672
 CMD ["node", "index.js"]
 
 COPY prod/ /app/
