@@ -1,0 +1,10 @@
+rabbit-structure-visualizer:
+  image: pipedrive/rabbit-structure-visualizer:latest
+  ports:
+    - 55672
+  environment:
+    ENV_ID: live
+    NODE_ENV: live
+  mem_limit: 512m
+  restart: always
+  command: ["node", "index.js"]

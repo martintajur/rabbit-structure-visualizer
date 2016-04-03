@@ -1,0 +1,14 @@
+FROM node:5.9-slim
+USER nobody
+
+# Consul service configuration
+ENV SERVICE_NAME rabbit-structure-visualizer
+ENV SERVICE_55672_NAME rabbit-structure-visualizer
+ENV NPM_CONFIG_LOGLEVEL warn
+
+WORKDIR /app
+EXPOSE 55672
+CMD ["node", "index.js"]
+
+COPY prod/ /app/
+COPY src/ /app/
