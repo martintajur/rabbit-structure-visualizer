@@ -1,70 +1,53 @@
 {
     "exchanges": [
         {
-            "name": "some_events",
+            "name": "serviceA-events",
             "options": {
                 "type": "topic",
                 "durable": true,
-                "autoDelete": false
+                "autoDelete": false,
+                "confirm": true
             }
         },
         {
-            "name": "serviceA.retries.sender",
+            "name": "serviceA-events.retry",
             "options": {
                 "type": "topic",
                 "durable": true,
-                "autoDelete": false
-            }
-        },
-        {
-            "name": "serviceA.retries",
-            "options": {
-                "type": "topic",
-                "durable": true,
-                "autoDelete": false
+                "autoDelete": false,
+                "confirm": true
             }
         }
     ],
     "queues": [
         {
-            "name": "serviceA.some_events.queue",
-            "options": {
-                "durable": true,
-                "autoDelete": false
-            },
-            "bindings": [
-                {
-                    "exchange": "some_events",
-                    "routing": "#"
-                }
-            ]
-        },
-        {
-            "name": "serviceA.retries.queue",
-            "options": {
-                "durable": true,
-                "autoDelete": false
-            },
-            "bindings": [
-                {
-                    "exchange": "serviceA.retries",
-                    "routing": "#"
-                }
-            ]
-        },
-        {
-            "name": "serviceA.retries.sender.queue",
+            "name": "serviceA-events",
             "options": {
                 "durable": true,
                 "autoDelete": false,
+                "closeChannelOnUnsubscribe": false
+            },
+            "bindings": [
+                {
+                    "exchange": "serviceA-events",
+                    "routing": "#"
+                }
+            ]
+        },
+        {
+            "name": "serviceA-events.retry",
+            "options": {
+                "durable": true,
+                "autoDelete": false,
+                "closeChannelOnUnsubscribe": false,
                 "arguments": {
-                    "x-dead-letter-exchange": "serviceA.retries",
+                    "x-dead-letter-exchange": "serviceA-events",
                     "x-message-ttl": 10000
                 }
             },
             "bindings": [
                 {
-                    "exchange": "serviceA.retries.sender",
+                    "exchange": "serviceA-events.retry",
                     "routing": "#"
                 }
             ]
