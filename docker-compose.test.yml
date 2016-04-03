@@ -1,7 +1,7 @@
 rabbit-structure-visualizer:
   image: pipedrive/rabbit-structure-visualizer:${ENV_ID}
   ports:
-    - 55672
+    - 55672:55672
   environment:
     ENV_ID: ${ENV_ID}
     NODE_ENV: ${ENV_ID}
