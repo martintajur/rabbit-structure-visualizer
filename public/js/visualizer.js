@@ -73,37 +73,13 @@ $(function() {
 			return;
 		}
 
-		$('#chart').css('height', Math.max(250, Math.max(structure.exchanges.length, structure.queues.length) * 60));
-
-		var chart = d3
-				.select('#chart')
-				.html('')
-				.append('svg')
-				.chart('Sankey.Path'),
+		var nodes = [],
+			bindings = [],
+			links = [],
 			exchangeFmt = _.template('Exchange: <%- name %>'),
 			queueFmt = _.template('Queue: <%- name %>'),
 			bindingFmt = _.template('→ <%- routing %> →'),
 			deadLetterBindingFmt = _.template('← x-dead-letter-exchange: <%- data["x-dead-letter-exchange"] %> (<%- data["x-message-ttl"] %> ms) ←', { variable: 'data' });
-
-		chart
-			.nodeWidth(20)
-			.nodePadding(25)
-			.iterations(60)
-			.spread(true)
-			.name(function(n) { return n.name; })
-			.colorNodes(function(name, node) {
-				if (name && name.toLowerCase().indexOf('queue') > -1) return '#f6b26b';
-				if (name && name.toLowerCase().indexOf('→') > -1) return '#9ec4e8';
-				if (name && name.toLowerCase().indexOf('x-dead-letter') > -1) return '#f00';
-				return '#fff176';
-			})
-			.colorLinks(function(link) {
-				return '#999';
-			});
-
-		var nodes = [],
-			bindings = [],
-			links = [];
 
 		structure.exchanges.forEach(function(exchange, key) {
 			exchange.name = exchangeFmt(exchange);
@@ -162,6 +138,30 @@ $(function() {
 			links.push(linkSource);
 			links.push(linkTarget);
 		});
+
+		$('#chart').css('height', Math.max(250, Math.max(nodes.length, links.length) * 25));
+
+		var chart = d3
+				.select('#chart')
+				.html('')
+				.append('svg')
+				.chart('Sankey.Path');
+
+		chart
+			.nodeWidth(20)
+			.nodePadding(25)
+			.iterations(60)
+			.spread(true)
+			.name(function(n) { return n.name; })
+			.colorNodes(function(name, node) {
+				if (name && name.toLowerCase().indexOf('queue') > -1) return '#f6b26b';
+				if (name && name.toLowerCase().indexOf('→') > -1) return '#9ec4e8';
+				if (name && name.toLowerCase().indexOf('x-dead-letter') > -1) return '#f00';
+				return '#fff176';
+			})
+			.colorLinks(function(link) {
+				return '#999';
+			});
 
 		var chartData = {
 			nodes: nodes,
