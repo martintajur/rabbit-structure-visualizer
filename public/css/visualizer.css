@@ -1,0 +1,42 @@
+body {
+	margin: 30px auto;
+	width: 1280px;
+}
+
+textarea.json-input, #chart {
+	font: 13px Consolas,Menlo,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New,monospace,sans-serif;
+}
+
+#current-service-title {
+	margin-top: 0px;
+	margin-bottom: 20px;
+	cursor: text;
+	display: inline-block;
+}
+
+#chart {
+	width: 100%;
+}
+
+.node rect {
+	fill-opacity: .9;
+	shape-rendering: crispEdges;
+}
+.node text {
+	text-shadow: 0 1px 0 #fff;
+}
+
+.link {
+	fill: none;
+	stroke: #000;
+	stroke-opacity: .1;
+}
+
+textarea.json-input {
+	width: 100%;
+	max-width: 100%;
+	min-width: 100%;
+	height: 350px;
+	margin-bottom: 50px;
+	box-sizing: border-box;
+}

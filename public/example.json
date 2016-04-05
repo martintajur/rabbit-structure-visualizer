@@ -1,56 +1,252 @@
 {
-    "exchanges": [
-        {
-            "name": "serviceA-events",
-            "options": {
-                "type": "topic",
-                "durable": true,
-                "autoDelete": false,
-                "confirm": true
+   "exchanges": [
+      {
+         "name": "api_events",
+         "options": {
+            "type": "topic",
+            "durable": true,
+            "autoDelete": false,
+            "confirm": true
+         }
+      },
+      {
+         "name": "notifications",
+         "options": {
+            "type": "topic",
+            "durable": true,
+            "autoDelete": false,
+            "confirm": true
+         }
+      },
+      {
+         "name": "billing_events",
+         "options": {
+            "type": "topic",
+            "durable": true,
+            "autoDelete": false,
+            "confirm": true
+         }
+      },
+      {
+         "name": "reviews_worker",
+         "options": {
+            "type": "topic",
+            "durable": true,
+            "autoDelete": false,
+            "confirm": true
+         }
+      }
+   ],
+   "queues": [
+      {
+         "name": "action_feed_api_review",
+         "options": {
+            "durable": true,
+            "autoDelete": false,
+            "closeChannelOnUnsubscribe": false
+         },
+         "bindings": [
+            {
+               "exchange": "api_events",
+               "routing": "review.event.#"
             }
-        },
-        {
-            "name": "serviceA-events.retry",
-            "options": {
-                "type": "topic",
-                "durable": true,
-                "autoDelete": false,
-                "confirm": true
+         ]
+      },
+      {
+         "name": "action_feed_invitation",
+         "options": {
+            "durable": true,
+            "autoDelete": false,
+            "closeChannelOnUnsubscribe": false
+         },
+         "bindings": [
+            {
+               "exchange": "api_events",
+               "routing": "invitation.event.#"
             }
-        }
-    ],
-    "queues": [
-        {
-            "name": "serviceA-events",
-            "options": {
-                "durable": true,
-                "autoDelete": false,
-                "closeChannelOnUnsubscribe": false
-            },
-            "bindings": [
-                {
-                    "exchange": "serviceA-events",
-                    "routing": "#"
-                }
-            ]
-        },
-        {
-            "name": "serviceA-events.retry",
-            "options": {
-                "durable": true,
-                "autoDelete": false,
-                "closeChannelOnUnsubscribe": false,
-                "arguments": {
-                    "x-dead-letter-exchange": "serviceA-events",
-                    "x-message-ttl": 10000
-                }
-            },
-            "bindings": [
-                {
-                    "exchange": "serviceA-events.retry",
-                    "routing": "#"
-                }
-            ]
-        }
-    ]
+         ]
+      },
+      {
+         "name": "action_feed_pending_invitation",
+         "options": {
+            "durable": true,
+            "autoDelete": false,
+            "closeChannelOnUnsubscribe": false
+         },
+         "bindings": [
+            {
+               "exchange": "notifications",
+               "routing": "invitation.event.#"
+            }
+         ]
+      },
+      {
+         "name": "action_feed_project",
+         "options": {
+            "durable": true,
+            "autoDelete": false,
+            "closeChannelOnUnsubscribe": false
+         },
+         "bindings": [
+            {
+               "exchange": "api_events",
+               "routing": "project.event.#"
+            }
+         ]
+      },
+      {
+         "name": "action_feed_user",
+         "options": {
+            "durable": true,
+            "autoDelete": false,
+            "closeChannelOnUnsubscribe": false
+         },
+         "bindings": [
+            {
+               "exchange": "api_events",
+               "routing": "user.event.#"
+            }
+         ]
+      },
+      {
+         "name": "analytics_pusher_event",
+         "options": {
+            "durable": true,
+            "autoDelete": false,
+            "closeChannelOnUnsubscribe": false
+         },
+         "bindings": [
+            {
+               "exchange": "api_events",
+               "routing": "event.event.#"
+            }
+         ]
+      },
+      {
+         "name": "analytics_pusher_invitation",
+         "options": {
+            "durable": true,
+            "autoDelete": false,
+            "closeChannelOnUnsubscribe": false
+         },
+         "bindings": [
+            {
+               "exchange": "api_events",
+               "routing": "invitation.event.#"
+            }
+         ]
+      },
+      {
+         "name": "analytics_pusher_mood",
+         "options": {
+            "durable": true,
+            "autoDelete": false,
+            "closeChannelOnUnsubscribe": false
+         },
+         "bindings": [
+            {
+               "exchange": "api_events",
+               "routing": "mood.event.created.#"
+            }
+         ]
+      },
+      {
+         "name": "analytics_pusher_pending_invitation",
+         "options": {
+            "durable": true,
+            "autoDelete": false,
+            "closeChannelOnUnsubscribe": false
+         },
+         "bindings": [
+            {
+               "exchange": "notifications",
+               "routing": "invitation.event.#"
+            }
+         ]
+      },
+      {
+         "name": "analytics_pusher_project",
+         "options": {
+            "durable": true,
+            "autoDelete": false,
+            "closeChannelOnUnsubscribe": false
+         },
+         "bindings": [
+            {
+               "exchange": "api_events",
+               "routing": "project.event.#"
+            }
+         ]
+      },
+      {
+         "name": "analytics_pusher_user",
+         "options": {
+            "durable": true,
+            "autoDelete": false,
+            "closeChannelOnUnsubscribe": false
+         },
+         "bindings": [
+            {
+               "exchange": "api_events",
+               "routing": "user.event.#"
+            }
+         ]
+      },
+      {
+         "name": "analytics_pusher_project_user",
+         "options": {
+            "durable": true,
+            "autoDelete": false,
+            "closeChannelOnUnsubscribe": false
+         },
+         "bindings": [
+            {
+               "exchange": "api_events",
+               "routing": "project_user.event.#"
+            }
+         ]
+      },
+      {
+         "name": "analytics_pusher_review",
+         "options": {
+            "durable": true,
+            "autoDelete": false,
+            "closeChannelOnUnsubscribe": false
+         },
+         "bindings": [
+            {
+               "exchange": "api_events",
+               "routing": "review.event.#"
+            }
+         ]
+      },
+      {
+         "name": "outgoing_webhooks",
+         "options": {
+            "durable": true,
+            "autoDelete": false,
+            "closeChannelOnUnsubscribe": false
+         },
+         "bindings": [
+            {
+               "exchange": "api_events",
+               "routing": "mood.event.created.public"
+            }
+         ]
+      },
+      {
+         "name": "action_feed_worker_review",
+         "options": {
+            "durable": true,
+            "autoDelete": false,
+            "closeChannelOnUnsubscribe": false
+         },
+         "bindings": [
+            {
+               "exchange": "reviews_worker",
+               "routing": "review.notification.#"
+            }
+         ]
+      }
+   ]
 }
