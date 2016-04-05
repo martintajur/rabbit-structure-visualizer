@@ -35,7 +35,7 @@ $(function() {
 
 			if (data && data.exchanges) {
 				_.each(data.exchanges, function(exchange, i) {
-					if (!exchange.name) return;
+					if (!exchange || !exchange.name) return;
 					if (_.find(combinedData.exchanges, { name: exchange.name })) {
 						data.exchanges.splice(i);
 						// TODO: validate exchange properties and alert if there is a mismatch
