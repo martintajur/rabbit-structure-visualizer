@@ -1,6 +1,6 @@
 {
   "name": "rabbit-structure-visualizer",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "rabbit-structure visualizer",
   "main": "index.js",
   "scripts": {
