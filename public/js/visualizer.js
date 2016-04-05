@@ -45,6 +45,7 @@ $(function() {
 			}
 			if (data && data.queues) {
 				_.each(data.queues, function(queue, i) {
+					if (!queue || !queue.name) return;
 					var existingQueue = _.find(combinedData.queues, { name: queue.name });
 					if (existingQueue) {
 						existingQueue.bindings = existingQueue.bindings.concat(queue.bindings);
