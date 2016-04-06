@@ -1,6 +1,7 @@
+var services = {};
+
 $(function() {
-	var services = {},
-		storedServices,
+	var storedServices,
 		currentService = null;
 
 	$('.service-dd-link').each(function(i, srv) {
@@ -52,7 +53,9 @@ $(function() {
 	switchService(focusedService);
 	handleDeleteButtonState();
 
-	$('#add-service-link').on('click', addService);
+	$('#add-service-link').on('click', function() {
+		setTimeout(addService.bind(this), 0);
+	});
 	$('#button-delete').on('click', function() {
 		if (Object.keys(services).length <= 1) return;
 		if (window.confirm('Are you sure you wish to delete ' + currentService.name + ' service?')) {
@@ -133,14 +136,15 @@ $(function() {
 
 		if (data.id && services[data.id]) {
 			if (data.name) renameService(data.id, data.name || defaultName);
-			if (data.json) services[data.id].jsonContainer.val(data.json);
+			if (data.json) services[data.id].jsonContainer.val(data.json).change();
 			srv = services[data.id];
 		} else {
 			srv = {
 				id: data.id || id,
 				ddItem: $(services[lastId].ddItem).clone().attr('id', 'service-selector-' + id).attr('data-service-id', id).insertBefore('#service-selectors-separator'),
-				name: data.name || defaultName,
-				jsonContainer: $(services[lastId].jsonContainer).clone().attr('id', 'service-selector-' + id).attr('data-service-id', id).insertAfter('.json-input:last').val(data.json || '{\n   "exchanges": [],\n   "queues": []\n}')
+				name: data.name || window.prompt('Enter service name', defaultName) || defaultName,
+				jsonContainer: $(services[lastId].jsonContainer).clone().attr('id', 'service-selector-' + id).attr('data-service-id', id).insertAfter('.json-input:last').val(data.json || '{\n   "exchanges": [],\n   "queues": []\n}'),
+				focused: !data.id || data.focused
 			};
 		}
 

@@ -1,7 +1,16 @@
 $(function() {
-	var delayTimer = null;
+	var delayTimer = null,
+		updateDelayTimer = null;
 
 	$(document).on('rsv-service-added rsv-service-removed rsv-service-switched', bindTextareas);
+	$(document).on('rsv-service-added rsv-service-removed rsv-service-switched rsv-service-renamed', function() {
+		if (updateDelayTimer) {
+			clearTimeout(updateDelayTimer);
+		}
+		updateDelayTimer = setTimeout(function() {
+			reactToChange();
+		}, 200);
+	});
 
 	function bindTextareas() {
 		$('.json-input').off('change keyup').on('change keyup', reactToChange);
@@ -18,25 +27,30 @@ $(function() {
 	function reactToChange() {
 		var combinedData = {
 			exchanges: [],
-			queues: []
+			queues: [],
+			services: []
 		};
 
 		$('.json-input').each(function() {
-			var data = {};
+			if (!$(this).val()) return;
+			var data = {},
+				serviceData = _.clone(services[$(this).data('service-id')]);
 
 			try {
 				data = JSON.parse($(this).val());
 			}
 			catch (err) {
-				$(this).addClass('has-error');
 				console.warn(err);
 			}
-			$(this).removeClass('has-error');
+
+			combinedData.services.push(serviceData);
 
 			if (data && data.exchanges) {
 				_.each(data.exchanges, function(exchange, i) {
 					if (!exchange || !exchange.name) return;
-					if (_.find(combinedData.exchanges, { name: exchange.name })) {
+					var existingExchange = _.find(combinedData.exchanges, { name: exchange.name });
+					if (existingExchange) {
+						existingExchange.options = _.extend({}, existingExchange.options, exchange.options);
 						data.exchanges.splice(i);
 						// TODO: validate exchange properties and alert if there is a mismatch
 					}
@@ -46,9 +60,13 @@ $(function() {
 			if (data && data.queues) {
 				_.each(data.queues, function(queue, i) {
 					if (!queue || !queue.name) return;
+					if (!queue.serviceIds) queue.serviceIds = [];
+					queue.serviceIds.push(serviceData.id);
 					var existingQueue = _.find(combinedData.queues, { name: queue.name });
 					if (existingQueue) {
 						existingQueue.bindings = existingQueue.bindings.concat(queue.bindings);
+						existingQueue.serviceIds = existingQueue.serviceIds.concat(queue.serviceIds);
+						existingQueue.options = _.extend({}, existingQueue.options, queue.options);
 						data.queues.splice(i);
 						// TODO: validate queue properties and alert if there is a mismatch
 					}
@@ -78,14 +96,22 @@ $(function() {
 		var nodes = [],
 			bindings = [],
 			links = [],
+			consumerBindings = [],
 			exchangeFmt = _.template('Exchange: <%- name %>'),
 			queueFmt = _.template('Queue: <%- name %>'),
+			serviceFmt = _.template('Consumer: <%- name %>'),
 			bindingFmt = _.template('→ <%- routing %> →'),
-			deadLetterBindingFmt = _.template('← x-dead-letter-exchange: <%- data["x-dead-letter-exchange"] %> (<%- data["x-message-ttl"] %> ms) ←', { variable: 'data' });
+			deadLetterBindingFmt = _.template('← <%- data["x-dead-letter-exchange"] %> (<%- data["x-message-ttl"] %>ms) ←', { variable: 'data' });
 
 		structure.exchanges.forEach(function(exchange, key) {
 			exchange.name = exchangeFmt(exchange);
 			exchange._index = nodes.push(exchange) - 1;
+		});
+
+		structure.services.forEach(function(service) {
+			service.name = serviceFmt(service);
+			service._type = 'service';
+			service._index = nodes.push(service) - 1;
 		});
 
 		structure.queues.forEach(function(queue) {
@@ -110,6 +136,16 @@ $(function() {
 				bindings.push(deadLetterBinding);
 				deadLetterBinding._index = nodes.push(deadLetterBinding) - 1;
 			}
+
+			queue.serviceIds.forEach(function(serviceId) {
+				var consumerBinding = {
+					source: queue._index,
+					target: _.find(nodes, { '_type': 'service', id: serviceId })._index,
+					value: 1
+				};
+
+				consumerBindings.push(consumerBinding);
+			});
 		});
 
 		bindings.forEach(function(binding) {
@@ -141,7 +177,15 @@ $(function() {
 			links.push(linkTarget);
 		});
 
-		$('#chart').css('height', Math.max(250, Math.max(nodes.length, links.length) * 25));
+		consumerBindings.forEach(function(consumerBinding) {
+			consumerBinding.value = getNodeSum(consumerBinding.source) / _.filter(consumerBindings, { source: consumerBinding.source }).length;
+		});
+
+		consumerBindings.forEach(function(consumerBinding) {
+			links.push(consumerBinding);
+		});
+
+		$('#chart').css('height', Math.max(250, Math.max(nodes.length, links.length) * 35));
 
 		var chart = d3
 				.select('#chart')
@@ -152,16 +196,19 @@ $(function() {
 		chart
 			.nodeWidth(20)
 			.nodePadding(25)
-			.iterations(60)
+			.iterations(90)
 			.spread(true)
 			.name(function(n) { return n.name; })
 			.colorNodes(function(name, node) {
 				if (name && name.toLowerCase().indexOf('queue') > -1) return '#f6b26b';
 				if (name && name.toLowerCase().indexOf('→') > -1) return '#9ec4e8';
-				if (name && name.toLowerCase().indexOf('x-dead-letter') > -1) return '#f00';
+				if (name && name.toLowerCase().indexOf('←') > -1) return '#f00';
+				if (name && name.toLowerCase().indexOf('consumer') > -1) return '#0ff';
 				return '#fff176';
 			})
 			.colorLinks(function(link) {
+				if (link.target.name.toLowerCase().indexOf('←') > -1 || link.source.name.toLowerCase().indexOf('←') > -1) return '#f00';
+				if (link.target.name.toLowerCase().indexOf('consumer') > -1) return '#0ff';
 				return '#999';
 			});
 
@@ -171,5 +218,17 @@ $(function() {
 		};
 
 		chart.draw(chartData);
+
+		function getNodeSum(index) {
+			var targetSum = 0,
+				sourceSum = 0;
+
+			_.each(links, function(link) {
+				if (link.target === index) targetSum += link.value;
+				if (link.source === index) sourceSum += link.value;
+			});
+
+			return Math.max(targetSum, sourceSum);
+		}
 	}
 });
