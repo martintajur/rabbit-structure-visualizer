@@ -1,6 +1,6 @@
 # rabbit-structure visualizer
 
-A web-based tool that allows visualization of a RabbitMQ structure set up by a microservice.
+A web-based tool that allows visualization of a RabbitMQ structure set up by one or many microservices.
 
 ## Why?
 
