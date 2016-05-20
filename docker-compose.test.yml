@@ -3,8 +3,10 @@ rabbit-structure-visualizer:
   ports:
     - 55672:55672
   environment:
-    ENV_ID: ${ENV_ID}
-    NODE_ENV: ${ENV_ID}
+    - ENV_ID=${ENV_ID}
+    - NODE_ENV=${ENV_ID}
+    - reschedule:on-node-failure
   mem_limit: 512m
+  memswap_limit: 512m
   restart: always
   command: ["node", "index.js"]
